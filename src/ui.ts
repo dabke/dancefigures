@@ -111,6 +111,13 @@ export class Ui {
       { id: 'full', label: 'Full (accurate)' },
     ]);
     this.slider(b, 'Smoothing', 'smoothing');
+    const cut = this.slider(b, 'Limb confidence cutoff', 'minVisibility');
+    const cutNote = document.createElement('p');
+    cutNote.className = 'note';
+    cutNote.textContent =
+      'Lower: show arms/legs even when the camera is unsure (dim light, partly out of frame). ' +
+      'Higher: hide guessed limbs that wobble. Turn on Debug below to see which joints are cut (red).';
+    cut.append(cutNote);
 
     this.section(b, 'Beat');
     this.toggle(b, 'React to music (mic)', 'beatEnabled');

@@ -25,6 +25,7 @@ export interface Settings {
   numPoses: number; // 1..4
   model: ModelVariant;
   smoothing: number; // 0..1
+  minVisibility: number; // 0..1, joints below this confidence are hidden
   mirror: boolean;
   palette: string; // key of PALETTES
   background: Background;
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   numPoses: 3,
   model: 'lite',
   smoothing: 0.5,
+  minVisibility: 0.25,
   mirror: true, // front camera by default, so mirrored
   palette: 'neon',
   background: 'gradient',
@@ -67,6 +69,7 @@ export function sanitize(raw: unknown, palettes: readonly string[]): Settings {
     numPoses: Math.round(clamp(r.numPoses, 1, 4, d.numPoses)),
     model: oneOf(r.model, ['lite', 'full'] as const, d.model),
     smoothing: clamp(r.smoothing, 0, 1, d.smoothing),
+    minVisibility: clamp(r.minVisibility, 0, 1, d.minVisibility),
     mirror: bool(r.mirror, d.mirror),
     palette: oneOf(r.palette, palettes, d.palette),
     background: oneOf(r.background, BACKGROUNDS.map((b) => b.id), d.background),

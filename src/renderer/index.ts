@@ -66,7 +66,7 @@ export class Renderer {
 
     const figures = frame.tracks
       .filter((t) => t.alpha > 0.01)
-      .map((t) => toFigure(t, view, personColor(frame.palette, t.colorIndex), frame.beat, h));
+      .map((t) => toFigure(t, view, personColor(frame.palette, t.colorIndex), frame.beat, h, frame.minVisibility));
 
     switch (frame.style) {
       case 'stick':
@@ -83,7 +83,7 @@ export class Renderer {
         break;
     }
 
-    if (debug) this.drawDebugLandmarks(debug, view);
+    if (debug) this.drawDebugLandmarks(debug, view, frame.minVisibility);
   }
 
   /** Debug: the camera image, letterboxed and mirrored exactly like the figures. */
@@ -105,8 +105,11 @@ export class Renderer {
     ctx.restore();
   }
 
-  /** Debug: raw (unsmoothed, untracked) landmarks as thin lines + dots. */
-  private drawDebugLandmarks(debug: DebugInput, view: ReturnType<typeof computeView>): void {
+  /**
+   * Debug: raw (unsmoothed, untracked) landmarks. Green dots pass the limb confidence
+   * cutoff and are drawn; red hollow dots are below it and hidden in the figure.
+   */
+  private drawDebugLandmarks(debug: DebugInput, view: ReturnType<typeof computeView>, minVis: number): void {
     const { ctx } = this;
     ctx.save();
     ctx.lineWidth = 2;
@@ -120,10 +123,24 @@ export class Renderer {
       }
       ctx.stroke();
       for (let i = 0; i < 33; i++) {
-        ctx.fillStyle = p.visibility[i] > 0.5 ? '#fff' : 'rgba(255,255,255,0.35)';
-        ctx.fillRect(px[i * 2] - 3, px[i * 2 + 1] - 3, 6, 6);
+        const x = px[i * 2], y = px[i * 2 + 1];
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        if (p.visibility[i] >= minVis) {
+          ctx.fillStyle = '#3dff6e';
+          ctx.fill();
+        } else {
+          ctx.strokeStyle = '#ff3b3b';
+          ctx.stroke();
+        }
       }
     }
+    // Legend
+    ctx.font = '600 14px system-ui, sans-serif';
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(8, this.h - 34, 330, 26);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(`● green = drawn   ○ red = below cutoff (${minVis.toFixed(2)})`, 16, this.h - 16);
     ctx.restore();
   }
 }

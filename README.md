@@ -135,6 +135,11 @@ Place the phone or webcam where it can see **whole bodies**: high up, 3–6 m fr
 * Another app may be using the camera (video calls, the camera app). Close it and tap Retry.
 * Turn on ⚙ → *Debug: show camera + raw landmarks* to check what the camera actually sees.
 
+**Only the head (or part of the body) is drawn**
+* Arms and legs are drawn only when MediaPipe is confident enough about those joints. In dim light, or when people are partly out of frame, limb confidence drops while the face stays confident.
+* Lower ⚙ → Detection → **Limb confidence cutoff** (default 0.25; 0 draws every joint the model guesses). Raise it if hidden limbs show up wobbling.
+* Turn on ⚙ → **Debug** to see why: green joints are drawn, red ones are below the cutoff.
+
 **No figures in the dark**
 * Pose detection needs to see bodies. In a very dark room it fails, and party lights that strobe or flicker make it unreliable. Add some soft, steady light on the dance floor (even one lamp or uplight helps). Avoid having bright lights behind the dancers, pointing at the camera.
 * People need to be reasonably visible: try to keep at least the upper body in frame and avoid very wide shots where people are tiny.

@@ -30,8 +30,12 @@ export const JOINTS = [
   L.L_HIP, L.R_HIP, L.L_KNEE, L.R_KNEE, L.L_ANKLE, L.R_ANKLE,
 ];
 
-/** Minimum visibility for a landmark to be drawn. */
-export const VIS_MIN = 0.35;
+/**
+ * Default minimum MediaPipe visibility (0..1) for a joint to be drawn. User-configurable
+ * in Settings ("Limb confidence cutoff"): lower shows limbs even when the model is unsure
+ * (dim light, partly out of frame), higher hides guessed/jittery limbs.
+ */
+export const DEFAULT_MIN_VISIBILITY = 0.25;
 
 /** Aspect-preserving "contain" fit of the video frame into the canvas. */
 export function computeView(cw: number, ch: number, vw: number, vh: number, mirror: boolean): View {
@@ -55,10 +59,10 @@ const dist = (px: Float32Array, a: number, b: number) =>
   Math.hypot(px[a * 2] - px[b * 2], px[a * 2 + 1] - px[b * 2 + 1]);
 
 /** Head circle from face landmarks: center = mean of visible face points, radius from ear/eye-mouth spacing. */
-export function headCircle(px: Float32Array, vis: Float32Array, torsoLen: number): Figure['head'] {
+export function headCircle(px: Float32Array, vis: Float32Array, torsoLen: number, minVis: number): Figure['head'] {
   let sx = 0, sy = 0, n = 0;
   for (let i = 0; i <= 10; i++) {
-    if (vis[i] < VIS_MIN) continue;
+    if (vis[i] < minVis) continue;
     sx += px[i * 2]; sy += px[i * 2 + 1]; n++;
   }
   if (n < 3) return null;
@@ -82,11 +86,18 @@ export function torsoLength(px: Float32Array): number {
   return Math.hypot(sx - hx, sy - hy);
 }
 
-export const visible = (f: Figure, i: number) => f.vis[i] >= VIS_MIN;
-export const segVisible = (f: Figure, a: number, b: number) => f.vis[a] >= VIS_MIN && f.vis[b] >= VIS_MIN;
+export const visible = (f: Figure, i: number) => f.vis[i] >= f.minVis;
+export const segVisible = (f: Figure, a: number, b: number) => f.vis[a] >= f.minVis && f.vis[b] >= f.minVis;
 
 /** Builds a Figure (pixel-space person) from a tracked person. */
-export function toFigure(t: RenderTrack, view: View, color: string, beat: number, canvasH: number): Figure {
+export function toFigure(
+  t: RenderTrack,
+  view: View,
+  color: string,
+  beat: number,
+  canvasH: number,
+  minVis = DEFAULT_MIN_VISIBILITY,
+): Figure {
   const px = projectCoords(t.coords, view, new Float32Array(66));
   const torso = torsoLength(px);
   const base = Math.min(Math.max(torso * 0.075, 3), canvasH * 0.03);
@@ -96,7 +107,8 @@ export function toFigure(t: RenderTrack, view: View, color: string, beat: number
     alpha: t.alpha,
     px,
     vis: t.visibility,
-    head: headCircle(px, t.visibility, torso),
+    minVis,
+    head: headCircle(px, t.visibility, torso, minVis),
     lineWidth: base * (1 + beat * 0.7),
   };
 }

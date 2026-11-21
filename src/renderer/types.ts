@@ -16,6 +16,8 @@ export interface FrameData {
   style: FigureStyle;
   palette: string;
   background: Background;
+  /** Joints below this MediaPipe visibility (0..1) are not drawn. */
+  minVisibility: number;
 }
 
 /** Maps normalized landmark coords to canvas pixels (aspect-preserving "contain" fit). */
@@ -36,6 +38,8 @@ export interface Figure {
   /** x,y in px for each of the 33 landmarks */
   px: Float32Array;
   vis: Float32Array;
+  /** Visibility cutoff in effect for this frame. */
+  minVis: number;
   head: { x: number; y: number; r: number } | null;
   /** Base line width in px, scaled to the person's size on screen (and the beat). */
   lineWidth: number;

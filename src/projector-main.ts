@@ -51,7 +51,7 @@ window.addEventListener('mousemove', () => {
 
 const EMPTY: FrameData = {
   tracks: [], beat: 0, videoWidth: 1280, videoHeight: 720, mirror: true,
-  style: 'neon', palette: 'neon', background: 'gradient',
+  style: 'neon', palette: 'neon', background: 'gradient', minVisibility: 0.25,
 };
 
 function loop(now: number) {

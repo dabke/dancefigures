@@ -210,6 +210,7 @@ function frameData(now: number): FrameData {
     style: settings.style,
     palette: settings.palette,
     background: settings.background,
+    minVisibility: settings.minVisibility,
   };
 }
 
