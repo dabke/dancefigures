@@ -1,0 +1,71 @@
+# Netlify configuration (free plan is enough). See README "Deploy".
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# WASM must be served with the right MIME type for streaming compilation.
+[[headers]]
+  for = "/mediapipe/wasm/vision_wasm_internal.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Models and WASM have stable (unhashed) names: always revalidate (cheap, uses ETag).
+# The service worker serves them from its own cache anyway, so this only affects updates.
+[[headers]]
+  for = "/models/*"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/mediapipe/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Service worker and HTML entry points must never be cached long-term,
+# otherwise "Update available" would never appear after a deploy.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/projector.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "no-cache"
+
+# Vite's hashed bundles never change: cache forever.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+
+# Camera + mic are needed by this origin only; block everything else.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Permissions-Policy = "camera=(self), microphone=(self), geolocation=(), payment=()"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
