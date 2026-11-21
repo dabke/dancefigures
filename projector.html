@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="icon" type="image/png" href="./icons/icon-192.png" />
+    <title>DanceFigures – Projector</title>
+  </head>
+  <body class="projector">
+    <canvas id="stage"></canvas>
+    <div id="waiting">
+      <h2>Waiting for DanceFigures…</h2>
+      <p>Keep the control window open with the camera running.</p>
+    </div>
+    <button id="fs-hint">Drag this window onto the projector screen, then click here (or press F) for fullscreen</button>
+    <script type="module" src="./src/projector-main.ts"></script>
+  </body>
+</html>

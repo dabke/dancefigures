@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Turns dancers into animated neon figures. Runs fully on-device and offline." />
+    <link rel="icon" type="image/png" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <title>DanceFigures</title>
+  </head>
+  <body class="hud-hidden">
+    <!-- Output canvas: fills the screen. The camera image is never shown unless Debug is on. -->
+    <canvas id="stage"></canvas>
+    <!-- Camera frames go here for pose detection only (kept off-screen). -->
+    <video id="video" playsinline muted></video>
+
+    <!-- HUD (auto-hides; tap the screen to show) -->
+    <div id="hud">
+      <button id="btn-style" class="hud-btn" title="Next style (or swipe)">Style</button>
+      <button id="btn-camera" class="hud-btn" title="Switch camera" aria-label="Switch camera">⟲</button>
+      <button id="btn-fullscreen" class="hud-btn" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+      <button id="btn-settings" class="hud-btn" title="Settings" aria-label="Settings">⚙</button>
+    </div>
+    <div id="fps" hidden></div>
+    <div id="toasts" aria-live="polite"></div>
+
+    <!-- Shown while the projector window is doing the drawing -->
+    <div id="control-mode" hidden>
+      <h2>Projector window active</h2>
+      <p>This window is now the control panel. Figures are shown on the projector window.</p>
+      <p>Open ⚙ Settings to change style, colors and more.</p>
+      <p>Keep this window open and not minimized: the camera pauses when it is hidden.</p>
+      <button id="btn-close-projector" class="action">Close projector window</button>
+    </div>
+
+    <!-- Settings slide-over -->
+    <div id="panel-scrim" hidden></div>
+    <aside id="panel" aria-label="Settings">
+      <header>
+        <h2>Settings</h2>
+        <button id="panel-close" class="hud-btn" aria-label="Close settings">✕</button>
+      </header>
+      <div id="panel-body"></div>
+    </aside>
+
+    <!-- Start screen: Start is the user gesture for camera, mic, audio and fullscreen -->
+    <section id="start">
+      <img src="./icons/icon-192.png" alt="" width="96" height="96" />
+      <h1>DanceFigures</h1>
+      <p class="tagline">Point the camera at the dance floor. Everyone becomes a glowing figure.</p>
+      <button id="btn-start">Start</button>
+      <p id="start-progress" aria-live="polite"></p>
+      <p id="start-error" role="alert" hidden></p>
+      <p class="fine">Uses the camera and microphone on this device only. Nothing is uploaded or recorded.</p>
+      <p id="start-offline" class="fine"></p>
+    </section>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
