@@ -23,7 +23,7 @@ Allow about 15 minutes. Tick each box.
 
 ### Camera placement
 - [ ] Phone in **landscape**, mounted **high** (head height or above), **3–6 m** from the dance floor, pointing at it.
-- [ ] Use the **back camera** (⟲ button) if it can see the floor; it has better quality. Turn **Mirror** on in ⚙ if moving left should look like moving left on the projector.
+- [ ] Check ⚙ → Camera says **now: back**. The app starts on the back camera; the front/selfie camera only sees whoever is holding the phone. Turn **Mirror** on in ⚙ if moving left should look like moving left on the projector.
 - [ ] Turn on ⚙ → **Debug: show camera** to check the framing: whole bodies (at least head to hips) visible. Then turn Debug **off**.
 
 ### Detection

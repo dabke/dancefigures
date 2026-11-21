@@ -123,7 +123,7 @@ GitHub Pages can't set custom headers. That's fine, because it serves `.wasm` as
 | **Phone + Cast** | Android quick settings → **Screen Cast / Smart View**, and pick the Chromecast or smart TV. Then tap ⛶ Fullscreen in the app. Casting adds a little latency, which is fine for visuals. |
 | **Laptop + second screen** | Open the app URL in Chrome on a laptop with a webcam and the projector connected as an extended display. ⚙ → **Open projector window**, drag the new window onto the projector, then click it (or press **F**) for fullscreen. The first window becomes the control panel. This mode is meant for laptops; on a phone use fullscreen and mirroring. |
 
-Place the phone or webcam where it can see **whole bodies**: high up, 3–6 m from the dancers, in landscape. Use the back camera (⟲) for better quality; it's not mirrored by default.
+Place the phone or webcam where it can see **whole bodies**: high up, 3–6 m from the dancers, in landscape. The app starts with the **back camera** (pointing at the dance floor, unmirrored). Use ⟲ to switch to the front/selfie camera, which turns mirroring on.
 
 ---
 

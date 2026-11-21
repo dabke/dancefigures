@@ -78,6 +78,8 @@ export class Ui {
     });
     $('btn-style').textContent = STYLES.find((x) => x.id === s.style)?.label ?? 'Style';
     $('fps').hidden = !s.showFps;
+    const cam = document.getElementById('btn-switch-cam');
+    if (cam) cam.textContent = `Switch camera (now: ${s.facing === 'user' ? 'front / selfie' : 'back'})`;
     $('sens-row').classList.toggle('disabled', !s.beatEnabled);
   }
 
@@ -130,7 +132,7 @@ export class Ui {
 
     this.section(b, 'Camera');
     this.toggle(b, 'Mirror', 'mirror');
-    this.button(b, 'Switch front / back camera', () => this.cb.onSwitchCamera());
+    this.button(b, 'Switch camera', () => this.cb.onSwitchCamera()).id = 'btn-switch-cam';
     this.toggle(b, 'Debug: show camera + raw landmarks', 'debugCamera');
 
     this.section(b, 'Output');
@@ -224,12 +226,13 @@ export class Ui {
     return row;
   }
 
-  private button(parent: HTMLElement, label: string, onClick: () => void): void {
+  private button(parent: HTMLElement, label: string, onClick: () => void): HTMLButtonElement {
     const btn = document.createElement('button');
     btn.className = 'action';
     btn.textContent = label;
     btn.addEventListener('click', onClick);
     parent.append(btn);
+    return btn;
   }
 
   // ---------- Live readouts ----------

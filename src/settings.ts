@@ -42,17 +42,38 @@ export const DEFAULT_SETTINGS: Settings = {
   model: 'lite',
   smoothing: 0.5,
   minVisibility: 0.25,
-  mirror: true, // front camera by default, so mirrored
+  mirror: false, // back camera by default: not mirrored (front camera switches mirroring on)
   palette: 'neon',
   background: 'gradient',
   beatEnabled: true,
   beatSensitivity: 0.5,
   showFps: false,
   debugCamera: false,
-  facing: 'user',
+  // Back camera: at a party the phone faces the dance floor, not the person holding it.
+  facing: 'environment',
 };
 
 const KEY = 'dancefigures.settings.v1';
+/**
+ * Schema version stored alongside the settings.
+ * v2: default camera changed from front to back. Settings saved before v2 have
+ * facing 'user' only because it was the old default, so they are moved to the
+ * back camera (unmirrored) once; everything else is kept.
+ */
+export const SETTINGS_VERSION = 2;
+
+/** Upgrades raw stored settings from older versions. Pure, so it is unit-testable. */
+export function migrate(raw: unknown): unknown {
+  if (!raw || typeof raw !== 'object') return raw;
+  const r = { ...(raw as Record<string, unknown>) };
+  const v = typeof r.v === 'number' ? r.v : 1;
+  if (v < 2) {
+    r.facing = 'environment';
+    r.mirror = false;
+  }
+  r.v = SETTINGS_VERSION;
+  return r;
+}
 
 const clamp = (v: unknown, lo: number, hi: number, d: number) =>
   typeof v === 'number' && Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d;
@@ -83,7 +104,7 @@ export function sanitize(raw: unknown, palettes: readonly string[]): Settings {
 
 export function loadSettings(palettes: readonly string[]): Settings {
   try {
-    return sanitize(JSON.parse(localStorage.getItem(KEY) ?? 'null'), palettes);
+    return sanitize(migrate(JSON.parse(localStorage.getItem(KEY) ?? 'null')), palettes);
   } catch {
     return { ...DEFAULT_SETTINGS };
   }
@@ -91,7 +112,7 @@ export function loadSettings(palettes: readonly string[]): Settings {
 
 export function saveSettings(s: Settings): void {
   try {
-    localStorage.setItem(KEY, JSON.stringify(s));
+    localStorage.setItem(KEY, JSON.stringify({ ...s, v: SETTINGS_VERSION }));
   } catch {
     /* storage full or disabled: settings just won't persist */
   }
